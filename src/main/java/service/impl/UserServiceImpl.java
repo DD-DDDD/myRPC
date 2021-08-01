@@ -13,4 +13,10 @@ public class UserServiceImpl implements UserService {
 
         return User.builder().userName(UUID.randomUUID().toString()).id(id).sex(random.nextBoolean()).build();
     }
+
+    @Override
+    public Integer insertUserId(User user) {
+        System.out.println("插入数据成功: " + user);
+        return null;
+    }
 }

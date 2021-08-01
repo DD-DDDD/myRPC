@@ -1,10 +1,13 @@
 package server;
 
+import bean.RPCRequest;
+import bean.RPCResponse;
 import service.impl.UserServiceImpl;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -24,12 +27,16 @@ public class RPCServer {
                         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 
-                        Integer id = ois.readInt();
-                        User userByUserId = userService.getUserByUserId(id);
+                        // 读取客户端传过来的request
+                        RPCRequest request = (RPCRequest) ois.readObject();
+                        // 反射调用对应方法
+                        Method method = userService.getClass().getMethod(request.getMethodName(), request.getParamsTypes());
+                        Object invoke = method.invoke(userService, request.getParams());
+                        // 封装，写入response对象
 
-                        oos.writeObject(userByUserId);
+                        oos.writeObject(RPCResponse.success(invoke));
                         oos.flush();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         System.out.println("从IO中读取错误");
                     }
