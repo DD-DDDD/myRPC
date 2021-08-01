@@ -14,7 +14,8 @@ public class ClientProxy implements InvocationHandler {
     private final String host;
     private final int port;
 
-    // jdk 动态代理， 每一次代理对象调用方法，会经过此方法增强（反射获取request对象，socket发送至客户端）
+    // jdk 动态代理， 每一次代理对象调用方法
+    // 会经过此方法增强（反射获取request对象，socket发送至客户端）
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         // request 构建，使用lombok中builder
@@ -28,6 +29,7 @@ public class ClientProxy implements InvocationHandler {
     }
 
     <T>T getProxy(Class<T> tClass) {
+        // this 就是处理调用方法的InvocationHandler
         return (T) Proxy.newProxyInstance(tClass.getClassLoader(), new Class[]{tClass}, this);
     }
 }

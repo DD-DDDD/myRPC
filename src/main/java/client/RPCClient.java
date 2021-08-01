@@ -1,6 +1,8 @@
 package client;
 
+import bean.Blog;
 import server.User;
+import service.BlogService;
 import service.UserService;
 
 public class RPCClient {
@@ -16,5 +18,12 @@ public class RPCClient {
         Integer integer = proxy.insertUserId(user);
 
         System.out.println("向服务器端插入数据: " + integer);
+
+        // 客户中添加新的测试用例
+        BlogService blogService = clientProxy.getProxy(BlogService.class);
+        Blog blogById = blogService.getBlogById(10000);
+
+        System.out.println("从服务端得到的blog为：" + blogById);
+
     }
 }
