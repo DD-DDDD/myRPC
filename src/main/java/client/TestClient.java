@@ -8,7 +8,7 @@ import service.UserService;
 public class TestClient {
     public static void main(String[] args) {
         // 构建一个使用java Socket/ netty/....传输的客户端
-        RPCClient rpcClient = new NettyRPCClient("127.0.0.1", 8899);
+        RPCClient rpcClient = new NettyRPCClient();
         // 把这个客户端传入代理客户端
         ClientProxy rpcClientProxy = new ClientProxy(rpcClient);
         // 代理客户端根据不同的服务，获得一个代理类， 并且这个代理类的方法以或者增强（封装数据，发送请求）

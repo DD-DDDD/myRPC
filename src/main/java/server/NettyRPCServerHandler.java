@@ -18,14 +18,14 @@ public class NettyRPCServerHandler extends SimpleChannelInboundHandler<RPCReques
     private final ServiceProvider serviceProvider;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, RPCRequest request) throws Exception {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, RPCRequest request) {
         RPCResponse response = getResponse(request);
         channelHandlerContext.writeAndFlush(response);
         channelHandlerContext.close();
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext channelHandlerContext, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext channelHandlerContext, Throwable cause) {
         cause.printStackTrace();
         channelHandlerContext.close();
     }

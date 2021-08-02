@@ -23,7 +23,6 @@ public class ClientProxy implements InvocationHandler {
                 .params(args).paramsTypes(method.getParameterTypes()).build();
         // 数据传输
         RPCResponse response = client.sendRequest(request);
-
         return response.getData();
     }
 

@@ -24,12 +24,10 @@ public class NettyRPCServer implements RPCServer{
             // 初始化
             serverBootstrap.group(bossGroup, workGroup).channel(NioServerSocketChannel.class)
                     .childHandler(new NettyServerInitializer(serviceProvider));
-
             // 同步阻塞
             ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
             // 死循环监听
             channelFuture.channel().closeFuture().sync();
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

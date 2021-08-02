@@ -9,18 +9,24 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
+import register.ServiceRegister;
+import register.ZkServiceRegister;
+
+import java.net.InetSocketAddress;
 
 public class NettyRPCClient implements RPCClient{
     public static final Bootstrap bootstrap;
     public static final EventLoopGroup eventLoopGroup;
-    private final String host;
-    private final int port;
+    private String host;
+    private int port;
+    private ServiceRegister serviceRegister;
 
-    public NettyRPCClient(String host, int port) {
-        this.port = port;
-        this.host = host;
+    public NettyRPCClient() {
+        this.serviceRegister = new ZkServiceRegister();
     }
     // netty客户端初始化，重复使用
+    // 静态代码块，JVM加载类时，仅执行一次。
+    // 执行顺序优先级: 静态块，main(), 构造块， 构造方法
     static {
         eventLoopGroup = new NioEventLoopGroup();
         bootstrap = new Bootstrap();
@@ -32,6 +38,9 @@ public class NettyRPCClient implements RPCClient{
      */
     @Override
     public RPCResponse sendRequest(RPCRequest request) {
+        InetSocketAddress address = serviceRegister.serviceDiscovery(request.getInterfaceName());
+        host = address.getHostName();
+        port = address.getPort();
         try {
             ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
             Channel channel = channelFuture.channel();
@@ -45,7 +54,7 @@ public class NettyRPCClient implements RPCClient{
             AttributeKey<RPCResponse> key = AttributeKey.valueOf("RPCResponse");
             RPCResponse response = channel.attr(key).get();
 
-            System.out.println(response);
+            System.out.println("NettyRPCClient: " + response);
             return response;
         } catch (InterruptedException e) {
             e.printStackTrace();
