@@ -1,15 +1,14 @@
 package loadBalance;
 
+import bean.RPCRequest;
+
 import java.util.List;
 import java.util.Random;
 
-public class RandomLoadBalance implements LoadBalance{
-
+public class RandomLoadBalance extends AbstractLoadBalance{
     @Override
-    public String balance(List<String> addressList) {
+    protected String doSelect(List<String> serviceAddresses, RPCRequest rpcRequest) {
         Random random = new Random();
-        int choose = random.nextInt(addressList.size());
-        System.out.println("负载均衡选择了" + choose + "服务器");
-        return addressList.get(choose);
+        return serviceAddresses.get(random.nextInt(serviceAddresses.size()));
     }
 }

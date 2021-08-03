@@ -1,5 +1,6 @@
 package register;
 
+import bean.RPCRequest;
 import loadBalance.LoadBalance;
 import loadBalance.RandomLoadBalance;
 import org.apache.curator.RetryPolicy;
@@ -51,7 +52,7 @@ public class ZkServiceRegister implements ServiceRegister{
 
     // 根据服务名返回地址
     @Override
-    public InetSocketAddress serviceDiscovery(String serviceName) {
+    public InetSocketAddress serviceDiscovery(String serviceName, RPCRequest request) {
         try {
             List<String> strings = client.getChildren().forPath("/" + serviceName);
             // 这里默认用的第一个，后面加负载均衡

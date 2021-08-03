@@ -1,13 +1,16 @@
 package loadBalance;
 
+import bean.RPCRequest;
+
 import java.util.List;
 
-public class RoundLoadBalance implements LoadBalance{
+public class RoundLoadBalance extends AbstractLoadBalance{
     private int choose = -1;
+
     @Override
-    public String balance(List<String> addressList) {
+    protected String doSelect(List<String> serviceAddresses, RPCRequest rpcRequest) {
         choose++;
-        choose = choose%addressList.size();
-        return addressList.get(choose);
+        choose = choose%serviceAddresses.size();
+        return serviceAddresses.get(choose);
     }
 }

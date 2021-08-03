@@ -38,7 +38,7 @@ public class NettyRPCClient implements RPCClient{
      */
     @Override
     public RPCResponse sendRequest(RPCRequest request) {
-        InetSocketAddress address = serviceRegister.serviceDiscovery(request.getInterfaceName());
+        InetSocketAddress address = serviceRegister.serviceDiscovery(request.getInterfaceName(), request);
         host = address.getHostName();
         port = address.getPort();
         try {
