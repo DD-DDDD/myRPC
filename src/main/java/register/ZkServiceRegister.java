@@ -1,6 +1,7 @@
 package register;
 
 import bean.RPCRequest;
+import loadBalance.ConsistentHashLoadBalance;
 import loadBalance.LoadBalance;
 import loadBalance.RandomLoadBalance;
 import org.apache.curator.RetryPolicy;
@@ -18,7 +19,7 @@ public class ZkServiceRegister implements ServiceRegister{
     // zookeeper根路径节点
     private static final String ROOT_PATH = "MyRPC";
     // 初始化负载均衡器， 这里用的是随机， 一般通过构造函数传入
-    private LoadBalance loadBalance = new RandomLoadBalance();
+    private LoadBalance loadBalance = new ConsistentHashLoadBalance();
 
     // 这里负责zookeeper客户端的初始化，并与zookeeper服务端建立连接
     public ZkServiceRegister(){
@@ -55,8 +56,8 @@ public class ZkServiceRegister implements ServiceRegister{
     public InetSocketAddress serviceDiscovery(String serviceName, RPCRequest request) {
         try {
             List<String> strings = client.getChildren().forPath("/" + serviceName);
-            // 这里默认用的第一个，后面加负载均衡
-            String string = loadBalance.balance(strings);
+            // 这里默认用的第一个，后面加
+            String string = loadBalance.selectServiceAddress(strings, request);
             return parseAddress(string);
         } catch (Exception e) {
             e.printStackTrace();
